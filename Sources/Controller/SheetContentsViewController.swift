@@ -182,7 +182,6 @@ private extension SheetContentsViewController {
         dimmingButton.addTarget(self, action: #selector(tappedBackground), for: .touchUpInside)
 
         let extraDimmingButton = UIButton()
-        extraDimmingButton.backgroundColor = .red
         self.view.insertSubview(extraDimmingButton, at: 0)
         extraDimmingButton.translatesAutoresizingMaskIntoConstraints = false
         extraDimmingButton.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
