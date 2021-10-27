@@ -72,7 +72,14 @@ open class SheetContentsViewController: UICollectionViewController, SheetContent
     }
 
     open override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        topMargin = max(layout.settings.topMargin - scrollView.contentOffset.y, 0)
+        let additionalTopMargin = layout.settings.topMargin - scrollView.contentOffset.y
+        let defaultTopMargin = UIScreen.main.bounds.height - options.sheetMaxHeight
+        if additionalTopMargin > 0 {
+            topMargin = additionalTopMargin + defaultTopMargin
+        } else {
+            topMargin = defaultTopMargin
+        }
+        print("topMargin \(topMargin)")
     }
     
     open override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
@@ -130,6 +137,15 @@ private extension SheetContentsViewController {
     }
     
     func setupContainerView() {
+
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: UIScreen.main.bounds.height - options.sheetMaxHeight),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+
         let bottomToolBarHeight: CGFloat = isToolBarHidden ? UIEdgeInsets.safeAreaInsets.bottom : SheetManager.shared.options.sheetToolBarHeight + UIEdgeInsets.safeAreaInsets.bottom
         
         collectionView?.delaysContentTouches = true
@@ -150,13 +166,15 @@ private extension SheetContentsViewController {
     func updateTopMargin() {
         let bottomToolBarHeight: CGFloat = isToolBarHidden ? UIEdgeInsets.safeAreaInsets.bottom : SheetManager.shared.options.sheetToolBarHeight + UIEdgeInsets.safeAreaInsets.bottom
         collectionView?.layoutIfNeeded()
-        
         let screenHeight = UIScreen.main.bounds.height
+
         let contentHeight = collectionView?.contentSize.height ?? 0
         let visibleHeight = min(contentHeight - layout.settings.topMargin, visibleContentsHeight)
         
         topMargin = isFullScreenContent ? 0 : max(screenHeight - layout.settings.minTopMargin - visibleHeight - bottomToolBarHeight, 0)
+        print("\(screenHeight) - \(layout.settings.minTopMargin) - \(visibleHeight) - \(bottomToolBarHeight) = \(topMargin)")
         layout.settings.topMargin = topMargin
+        print("updateTopMargin \(topMargin)")
     }
 
     func setupDimmingView() {

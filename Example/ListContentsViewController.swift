@@ -27,7 +27,7 @@ class ListContentsViewController: SheetContentsViewController {
     ]
 
     override var visibleContentsHeight: CGFloat {
-        return 320
+        return 200
     }
     
     override func viewDidLoad() {

@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
 
     @IBAction func tappedEtc(_ sender: Any) {
+        SheetManager.shared.options.sheetMaxHeight = 400
         let vc = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ListContentsViewController")
         let navigation = SheetNavigationController(rootViewController: vc)
         navigation.onDismissed = {

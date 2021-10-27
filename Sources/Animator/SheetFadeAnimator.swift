@@ -27,6 +27,7 @@ class SheetFadeAnimator: NSObject, UIViewControllerAnimatedTransitioning {
 
     init(to: CGFloat, from: CGFloat) {
         super.init()
+        print("\(to) -> \(from)")
         toTopMargin = to
         fromTopMargin = from
     }
