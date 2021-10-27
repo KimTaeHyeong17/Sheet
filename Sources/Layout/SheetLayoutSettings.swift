@@ -12,6 +12,9 @@ public struct SheetLayoutSettings {
 
     var topMargin: CGFloat = 0
 
+    /// Sheet max height
+    public var sheetMaxHeight: CGFloat?
+
     public var minTopMargin: CGFloat = 0
     
     /// Whether the header view is stiky. Defaults to true

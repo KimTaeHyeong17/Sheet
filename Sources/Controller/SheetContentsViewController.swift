@@ -130,6 +130,16 @@ private extension SheetContentsViewController {
     }
     
     func setupContainerView() {
+        if let sheetMaxHeight = layout.settings.sheetMaxHeight, sheetMaxHeight <= UIScreen.main.bounds.height {
+            collectionView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                collectionView.heightAnchor.constraint(equalToConstant: sheetMaxHeight),
+                collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            ])
+        }
+
         let bottomToolBarHeight: CGFloat = isToolBarHidden ? UIEdgeInsets.safeAreaInsets.bottom : SheetManager.shared.options.sheetToolBarHeight + UIEdgeInsets.safeAreaInsets.bottom
         
         collectionView?.delaysContentTouches = true
@@ -150,8 +160,8 @@ private extension SheetContentsViewController {
     func updateTopMargin() {
         let bottomToolBarHeight: CGFloat = isToolBarHidden ? UIEdgeInsets.safeAreaInsets.bottom : SheetManager.shared.options.sheetToolBarHeight + UIEdgeInsets.safeAreaInsets.bottom
         collectionView?.layoutIfNeeded()
-        
-        let screenHeight = UIScreen.main.bounds.height
+        let maxScreenHeight = layout.settings.sheetMaxHeight ?? UIScreen.main.bounds.height
+        let screenHeight = min(maxScreenHeight, UIScreen.main.bounds.height)
         let contentHeight = collectionView?.contentSize.height ?? 0
         let visibleHeight = min(contentHeight - layout.settings.topMargin, visibleContentsHeight)
         
@@ -163,13 +173,25 @@ private extension SheetContentsViewController {
         let dimmingButton = UIButton()
         collectionView?.insertSubview(dimmingButton, at: 0)
         dimmingButton.translatesAutoresizingMaskIntoConstraints = false
-        dimmingButton.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-        dimmingButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-        dimmingButton.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        dimmingButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        dimmingButton.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        dimmingButton.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        dimmingButton.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        dimmingButton.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
 
         dimmingButton.backgroundColor = .clear
         dimmingButton.addTarget(self, action: #selector(tappedBackground), for: .touchUpInside)
+
+        let extraDimmingButton = UIButton()
+        extraDimmingButton.backgroundColor = .red
+        self.view.insertSubview(extraDimmingButton, at: 0)
+        extraDimmingButton.translatesAutoresizingMaskIntoConstraints = false
+        extraDimmingButton.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        extraDimmingButton.bottomAnchor.constraint(equalTo: collectionView.topAnchor).isActive = true
+        extraDimmingButton.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        extraDimmingButton.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+
+        extraDimmingButton.backgroundColor = .clear
+        extraDimmingButton.addTarget(self, action: #selector(tappedBackground), for: .touchUpInside)
     }
 }
 
