@@ -108,7 +108,8 @@ public class SheetNavigationController: UINavigationController {
 
         UIView.animateKeyframes(withDuration: duration, delay: 0, options: [.calculationModeLinear], animations: {
             UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1) {
-                let diff = UIScreen.main.bounds.height - topMargin
+
+                let diff = SheetManager.shared.options.sheetMaxHeight - topMargin
                 snapShot.transform = CGAffineTransform(translationX: 0, y: diff)
                 self.backgroundView?.alpha = 0
                 self.presentingViewController?.view.transform = .identity

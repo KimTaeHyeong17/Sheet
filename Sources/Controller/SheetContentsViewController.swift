@@ -78,7 +78,7 @@ open class SheetContentsViewController: UICollectionViewController, SheetContent
     open override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         let velocity = scrollView.panGestureRecognizer.velocity(in: nil)
         if scrollView.contentOffset.y <= -10 && velocity.y >= 400 {
-            let diff = UIScreen.main.bounds.height - topMargin
+            let diff = options.sheetMaxHeight - topMargin
             let duration = min(0.3, diff / velocity.y)
             sheetNavigationController?.close(duration: TimeInterval(duration))
         }
@@ -130,15 +130,14 @@ private extension SheetContentsViewController {
     }
     
     func setupContainerView() {
-        if let sheetMaxHeight = layout.settings.sheetMaxHeight, sheetMaxHeight <= UIScreen.main.bounds.height {
-            collectionView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                collectionView.heightAnchor.constraint(equalToConstant: sheetMaxHeight),
-                collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
-        }
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            collectionView.heightAnchor.constraint(equalToConstant: min(options.sheetMaxHeight, UIScreen.main.bounds.height)),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+
 
         let bottomToolBarHeight: CGFloat = isToolBarHidden ? UIEdgeInsets.safeAreaInsets.bottom : SheetManager.shared.options.sheetToolBarHeight + UIEdgeInsets.safeAreaInsets.bottom
         
@@ -160,8 +159,7 @@ private extension SheetContentsViewController {
     func updateTopMargin() {
         let bottomToolBarHeight: CGFloat = isToolBarHidden ? UIEdgeInsets.safeAreaInsets.bottom : SheetManager.shared.options.sheetToolBarHeight + UIEdgeInsets.safeAreaInsets.bottom
         collectionView?.layoutIfNeeded()
-        let maxScreenHeight = layout.settings.sheetMaxHeight ?? UIScreen.main.bounds.height
-        let screenHeight = min(maxScreenHeight, UIScreen.main.bounds.height)
+        let screenHeight = min(options.sheetMaxHeight, UIScreen.main.bounds.height)
         let contentHeight = collectionView?.contentSize.height ?? 0
         let visibleHeight = min(contentHeight - layout.settings.topMargin, visibleContentsHeight)
         

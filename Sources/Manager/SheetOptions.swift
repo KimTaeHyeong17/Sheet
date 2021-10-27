@@ -78,6 +78,9 @@ public struct SheetOptions {
     
     /// sheet background color
     public var sheetBackgroundColor: UIColor = .white
+
+    /// sheet maximum height
+    public var sheetMaxHeight = UIScreen.main.bounds.height
 }
 
 public struct SheetAnimationOption {
